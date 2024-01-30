@@ -106,8 +106,8 @@ async function processArrayAsync() {
 }
 
 const findNearestIdleLift = async (requestedFloor) => {
-  let resLift = 1;
-  if (lifts > 1) {
+  let resLift = -1;
+  if (lifts >= 1 && idleLifts.length > 0) {
     let diff = floors + 10;
     // console.log(requestedFloor);
     for (let j = 0; j < idleLifts.length; j++) {
@@ -118,6 +118,8 @@ const findNearestIdleLift = async (requestedFloor) => {
       }
     }
   }
+
+else return
 
   if (liftPos[resLift] === parseInt(requestedFloor)) {
     await new Promise((resolve) => {
