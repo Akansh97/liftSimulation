@@ -19,7 +19,7 @@ const renderFn = (event) => {
 //   lifts = (event && event.target.elements["lifts-inp"].value) || 3;
 //   floors = (event && event.target.elements["floors-inp"].value) || 5;
 
-  lifts = event &&event.target.elements[0].value || 5;
+  lifts = event &&event.target.elements[0].value || 4;
   floors = event && event.target.elements[1].value || 3;
   
   idleLifts = [];
