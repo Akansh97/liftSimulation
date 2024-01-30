@@ -1,0 +1,246 @@
+:root {
+  --multiplier: 2;
+}
+
+html {
+  font-family: 'Montserrat', sans-serif;
+  /* font-family: 'Nunito', sans-serif;
+  font-family: 'Poppins', sans-serif; */
+}
+
+.line {
+  width: 100%;
+  margin-bottom: 20px;
+  border-bottom:5px solid cyan;
+}
+
+.btn {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  width: 100px;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: #000;
+  cursor: pointer;
+  border: 3px solid;
+  padding: 0.25em 0.5em;
+  box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.btn:active {
+  box-shadow: 0px 0px 0px 0px;
+  top: 5px;
+  left: 5px;
+}
+
+@media (min-width: 768px) {
+  .button-54 {
+    padding: 0.25em 0.75em;
+  }
+}
+
+input[type=number] {
+	width: 3em;
+	padding: 0.5em;
+	border: .2em solid #E91E63;
+	border-radius: 1em;
+	text-align: center;
+	color: #E91E63;
+	appearance: textfield;
+	margin: 0;
+	&::-webkit-inner-spin-button {
+		opacity: 1;
+		background: red;
+	}
+}
+/* 
+.btn {
+  background: black;
+  color: inherit;
+  border: 4px solid #0b60b0;
+  border-radius: 5px;
+  width: 100px;
+  text-align: center;
+  padding: 10px 20px;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
+.btn:hover {
+  background: white;
+  color: black;
+} */
+
+a {
+  text-decoration: none;
+  color:grey;
+}
+
+a:hover {
+  color:white
+}
+
+#submit-btn {
+  background: black;
+  color: inherit;
+  border: 4px solid #0b60b0;
+  border-radius: 5px;
+  width: 120px;
+  padding: 10px 20px;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
+#submit-btn:hover {
+  background: #1d2b53;
+  border: 4px solid #65b741;
+  /*   color:black; */
+}
+
+body {
+  background: #1d1e22;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* width: 80%; */
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+.lift-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.usrInput {
+  padding: 10px;
+  display: flex;
+  /*   background: #727787; */
+  align-items: center;
+  margin-bottom: 15px;
+  /*   flex-direction:column; */
+  gap: 20px;
+  padding: 5px 15px;
+}
+
+.container {
+  display: flex;
+  margin-top: 50px;
+  margin-bottom: 100px;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.floor {
+  background: #f0edcf;
+  display: flex;
+  padding: 20px 20px;
+  min-width: 600px;
+}
+
+.lift-block {
+  /*   position:fixed; */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+  padding-left: 50px;
+  width: 100%;
+  background: #f0edcf;
+  height: 100px;
+  /*   padding:50px; */
+  /*   position:relative; */
+}
+
+.lift {
+  /*   position:absolute; */
+  background: white;
+  width: 100px;
+  height: 100px;
+  /*   padding:5px; */
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  /* gap: 1px; */
+  justify-content: center;
+  align-items: center;
+  transition: all 2s;
+  border: 2px solid black;
+}
+
+.leftDoor {
+  width: 100px;
+  height: 100px;
+  /*   background:#00cc00; */
+  background: #bfcfe7;
+  border: 1px solid black;
+}
+
+.rightDoor {
+  width: 100px;
+  height: 100px;
+  background: #bfcfe7;
+  border: 1px solid black;
+}
+
+@keyframes moveUP {
+  0% {
+    transform: translateY(calc(var(--multiplier) * 0px));
+  }
+  100% {
+    transform: translateY(calc(var(--multiplier) * -200px));
+  }
+}
+
+.animationClass {
+  transition: all 3s;
+  animation: moveUP 1.5s forwards;
+}
+
+@keyframes leftDoorAnimation {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(-50px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+@keyframes rightDoorAnimation {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(50px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+.leftDoorAnimationClass {
+  background: red;
+  animation: leftDoorAnimation 2.5s 0.5s ease forwards;
+}
+
+.rightDoorAnimationClass {
+  background: red;
+  animation: rightDoorAnimation 2.5s 0.5s forwards;
+}
