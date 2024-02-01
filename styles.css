@@ -1,5 +1,6 @@
 :root {
   --multiplier: 2;
+  --liftSpeedModifier: 2;
 }
 
 html {
@@ -178,7 +179,7 @@ button:hover {
   /* gap: 1px; */
   justify-content: center;
   align-items: center;
-  transition: all 2s;
+  /* transition: all 8s; */
   border: 2px solid black;
 }
 
@@ -207,8 +208,8 @@ button:hover {
 }
 
 .animationClass {
-  transition: all 3s;
-  animation: moveUP 1.5s forwards;
+  /* transition: all 10s; */
+  /* animation: moveUP 15s forwards; */
 }
 
 @keyframes leftDoorAnimation {
@@ -237,10 +238,10 @@ button:hover {
 
 .leftDoorAnimationClass {
   background: red;
-  animation: leftDoorAnimation 2.5s 0.5s ease forwards;
+  animation: leftDoorAnimation 5s 0.5s linear forwards;
 }
 
 .rightDoorAnimationClass {
   background: red;
-  animation: rightDoorAnimation 2.5s 0.5s forwards;
+  animation: rightDoorAnimation 5s 0.5s linear forwards;
 }

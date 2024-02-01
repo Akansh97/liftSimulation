@@ -47,8 +47,8 @@ const renderFn = (event) => {
             <div class='floor floor${i}'>
 
               <div class='lift-btn'>
-                <button class='btn f${i}up ' role="button" onClick='btnFn()'>UP</button>
-                <button class='btn f${i}dwn ' role="button" onClick='btnFn()'>DOWN</button>
+                <button class='btn f${i}up ' role="button" onclick='btnFn(event)'>UP</button>
+                <button class='btn f${i}dwn ' role="button" onclick='btnFn(event)'>DOWN</button>
               </div>
 
               <div class='lift-block b${i}'>
@@ -63,8 +63,8 @@ const renderFn = (event) => {
             <div class='floor floor${i}'>
 
               <div class='lift-btn'>
-                <button class='btn f${i}up ' role="button" onClick='btnFn()'>UP</button>
-                <button class='btn f${i}dwn ' role="button" onClick='btnFn()'>DOWN</button>
+                <button class='btn f${i}up ' role="button" onclick='btnFn(event)'>UP</button>
+                <button class='btn f${i}dwn ' role="button" onclick='btnFn(event)'>DOWN</button>
               </div>
 
               <div class='lift-block b${i}'>
@@ -87,7 +87,7 @@ renderFn();
 
 let requests = [];
 
-const btnFn = async (e) => {
+const btnFn = async (event) => {
   const req = event.target.classList[1][1];
   await findNearestIdleLift(req);
   requests.push(req);
@@ -135,7 +135,7 @@ else return
       el2.classList.remove("leftDoorAnimationClass");
       el3.classList.remove("rightDoorAnimationClass");
       idleLifts.push(resLift);
-    }, 3200);
+    }, 5500);
   } else {
     const f11 = async () => {
       await moveLift(resLift, requestedFloor).then(() =>
@@ -147,21 +147,25 @@ else return
 };
 
 const moveLift = async (liftNumber, requestedFloor) => {
+  const liftPosInitial = liftPos[liftNumber]
   liftPos[liftNumber] = parseInt(requestedFloor);
   const el = document.querySelector(`.lift-${liftNumber}`);
   const el2 = document.getElementById(`lift-${liftNumber}-leftDoor`);
   const el3 = document.getElementById(`lift-${liftNumber}-rightDoor`);
+  const liftSpeedModifier = Math.abs(liftPos[liftNumber] - liftPosInitial) * 2
+  console.log({liftPosInitial, "a": liftPos[liftNumber], requestedFloor}, liftSpeedModifier)
 
   await new Promise((resolve) => {
     idleLifts = idleLifts.filter((e) => e !== liftNumber);
 
     const movePx = (requestedFloor - 1) * 150;
+    el.style.transition = `all linear ${liftSpeedModifier}s`
     el.style.transform = `translateY(-${movePx}px)`;
-    // el.style.transition = "all 3s";
+    
 
     setTimeout(() => {
       resolve();
-    }, 2000);
+    }, liftSpeedModifier*1000);
   });
 };
 
@@ -180,6 +184,6 @@ async function doorAnimationFunction(liftNumber) {
       el3.classList.remove("rightDoorAnimationClass");
       idleLifts.push(liftNumber);
       resolve();
-    }, 3200);
+    }, 5500);
   });
 }
