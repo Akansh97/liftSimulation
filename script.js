@@ -48,7 +48,6 @@ const renderFn = (event) => {
 
               <div class='lift-btn'>
                 <button class='btn f${i}up ' role="button" onclick='btnFn(event)'>UP</button>
-                <button class='btn f${i}dwn ' role="button" onclick='btnFn(event)'>DOWN</button>
               </div>
 
               <div class='lift-block b${i}'>
@@ -58,6 +57,23 @@ const renderFn = (event) => {
             </div>
 
           `;
+    }
+    else if (i === floors) {
+
+      htmlStr = `
+      <div class='floor floor${i}'>
+
+        <div class='lift-btn'>
+          <button class='btn f${i}dwn ' role="button" onclick='btnFn(event)'>DOWN</button>
+        </div>
+
+        <div class='lift-block b${i}'>
+        </div>
+
+      </div>
+
+    `;
+
     } else {
       htmlStr = `
             <div class='floor floor${i}'>
