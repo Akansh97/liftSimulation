@@ -101,75 +101,117 @@ form.addEventListener("submit", renderFn);
 
 renderFn();
 
-let requests = [];
+let requests = {
+  head : 0,
+  length : 0,
+  itr: 0
+};
+
+// let requestCheckerRunning = false
 
 const btnFn = async (event) => {
   const req = event.target.classList[1][1];
-  await findNearestIdleLift(req);
-  requests.push(req);
-  // processArrayAsync()
-};
+  requests.itr += 1;
+  requests.length += 1;
+  const ref = `${requests.itr}`
+  requests[ref] = Number(req);
+  if(requests.head === 0) requests.head = requests.itr
 
-async function processArrayAsync() {
-  for (const element of requests) {
-    await new Promise((resolve) => {
-      setTimeout(async () => {
-        await findNearestIdleLift(element);
-        resolve();
-      }, 0);
-    });
-  }
+
+
 }
 
-const findNearestIdleLift = async (requestedFloor) => {
-  let resLift = -1;
-  if (lifts >= 1 && idleLifts.length > 0) {
-    let diff = floors + 10;
-    // console.log(requestedFloor);
-    for (let j = 0; j < idleLifts.length; j++) {
-      const diff2 = Math.abs(requestedFloor - liftPos[idleLifts[j]]);
-      if (diff2 < diff) {
-        diff = diff2;
-        resLift = idleLifts[j];
-      }
+
+const checkRequests = setInterval(async() => {
+  if(requests.head  && requests.head <= requests.length) {
+    let limit = requests.length
+
+    for(let i = requests.head; i <= limit; i++) {
+      limit = requests.length
+      await checkIdleLift(requests[i]).then(() => {
+        requests.head += 1;
+        delete requests[requests.head - 1]
+      })
     }
   }
+}, 1000)
 
-else return
+const checkIdleLift = async(requestedFloor) => {
+  let flag = false;
+  const handler = setInterval(() => {
+    // console.log(`checking if any lifts are idle for ${requestedFloor}`)
+    if(idleLifts.length > 0) {
+      // console.log('lifts are idle now')
+      flag = true;
+    } 
+  },100)
 
-  if (liftPos[resLift] === parseInt(requestedFloor)) {
-    await new Promise((resolve) => {
-      doorAnimationFunction(resLift);
-      resolve();
-    });
-    idleLifts = idleLifts.filter((e) => e !== resLift);
-    const el2 = document.getElementById(`lift-${resLift}-leftDoor`);
-    const el3 = document.getElementById(`lift-${resLift}-rightDoor`);
-    el2.classList.add("leftDoorAnimationClass");
-    el3.classList.add("rightDoorAnimationClass");
-    setTimeout(() => {
-      el2.classList.remove("leftDoorAnimationClass");
-      el3.classList.remove("rightDoorAnimationClass");
-      idleLifts.push(resLift);
-    }, 5500);
-  } else {
-    const f11 = async () => {
-      await moveLift(resLift, requestedFloor).then(() =>
-        doorAnimationFunction(resLift)
-      );
-    };
-    f11();
+  await new Promise(async(resolve) => {
+    const checkFlag = async() => {
+      if(flag)  {
+        // console.log('executing find lift function')
+        clearInterval(handler)
+        return await findNearestIdleLift(requestedFloor).then(() => resolve())
+      }
+      else {
+        setTimeout(checkFlag, 100)
+      }
+    }
+    await checkFlag().then(() => resolve())
+  })
+}
+
+const findNearestIdleLift = async(requestedFloor) => {
+  // console.log('finding lift')
+  let diff = floors + 10
+  let resLift = 0;
+  for(let i = 0; i < idleLifts.length; i++ ) {
+    const lift = idleLifts[i]
+    const diff2 = Math.abs(liftPos[lift] - requestedFloor)
+    if(diff2 < diff) {
+      diff = diff2
+      resLift = lift
+    } 
   }
-};
+
+  if(!resLift)  await checkIdleLift(requestedFloor)
+
+  else {
+    await new Promise(async(resolve) => {
+      idleLifts = idleLifts.filter(e => e !== resLift)
+  
+      if(liftPos[resLift] === requestedFloor) {
+        await doorAnimationFunction(resLift).then(()=> 
+        idleLifts.push(resLift)
+        )
+        resolve()
+      }
+    
+      else {
+        await moveAndOpenDoorLift(resLift, requestedFloor).then(() => {
+          idleLifts.push(resLift)
+        })
+        resolve()
+      }
+    })
+  }
+
+}
+
+const moveAndOpenDoorLift = async(resLift, requestedFloor) => {
+  await  moveLift(resLift, requestedFloor).
+  then(async() => await doorAnimationFunction(resLift))
+}
 
 const moveLift = async (liftNumber, requestedFloor) => {
   const liftPosInitial = liftPos[liftNumber]
   liftPos[liftNumber] = parseInt(requestedFloor);
+  // console.log({liftNumber, requestedFloor})
   const el = document.querySelector(`.lift-${liftNumber}`);
   const el2 = document.getElementById(`lift-${liftNumber}-leftDoor`);
   const el3 = document.getElementById(`lift-${liftNumber}-rightDoor`);
   const liftSpeedModifier = Math.abs(liftPos[liftNumber] - liftPosInitial) * 2
-  console.log({liftPosInitial, "a": liftPos[liftNumber], requestedFloor}, liftSpeedModifier)
+  // console.log({liftPosInitial, "a": liftPos[liftNumber], requestedFloor}, liftSpeedModifier)
 
   await new Promise((resolve) => {
     idleLifts = idleLifts.filter((e) => e !== liftNumber);
