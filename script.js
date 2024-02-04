@@ -3,24 +3,35 @@ console.clear();
 const form = document.querySelector(".usrInput");
 const container = document.querySelector(".container");
 
-let lifts = 0;
-let floors = 0;
+// DATA STORE
+let lifts = 0; //number of lifts
+let floors = 0; //number of floors
 
-let idleLifts = [];
-let liftPos = [-1];
+let idleLifts = []; //array to track lifts which are idle
+let liftPos = [-1]; //array to track position of lifts
+
+let requests = {  //object to store lift requests
+  head : 0,
+  length : 0,
+  itr: 0
+};
 
 const debug = () => console.log(idleLifts, liftPos);
+const dataStore = () => {console.log({
+  'Lifts':lifts, 
+  'Floors':floors, 
+  'Idle Lifts': idleLifts,
+  'Position of Lifts' : liftPos.filter(e => e != -1), 
+  'Requests' : requests
+})}
 
 const renderFn = (event) => {
   event && event.preventDefault();
 
   container.innerHTML = "";
 
-//   lifts = (event && event.target.elements["lifts-inp"].value) || 3;
-//   floors = (event && event.target.elements["floors-inp"].value) || 5;
-
   lifts = event &&event.target.elements[0].value || 4;
-  floors = event && event.target.elements[1].value || 3;
+  floors = event && event.target.elements[1].value || 5;
   
   idleLifts = [];
   liftPos = [-1];
@@ -101,22 +112,27 @@ form.addEventListener("submit", renderFn);
 
 renderFn();
 
-let requests = {
-  head : 0,
-  length : 0,
-  itr: 0
-};
-
-// let requestCheckerRunning = false
 
 const btnFn = async (event) => {
-  const req = event.target.classList[1][1];
-  requests.itr += 1;
-  requests.length += 1;
-  const ref = `${requests.itr}`
-  requests[ref] = Number(req);
-  if(requests.head === 0) requests.head = requests.itr
-
+  const req = Number(event.target.classList[1][1]);
+  if(liftPos.includes(req) ) {
+    const lift = liftPos.indexOf(req)
+    if(idleLifts.includes(lift)) await doorAnimationFunction(lift)
+    else {
+      const temp = setInterval( async() => {
+        if(idleLifts.includes(lift)) {
+          await doorAnimationFunction(lift).then(clearInterval(temp))
+        }
+      }, 1000)
+    }
+  }
+  else{
+    requests.itr += 1;
+    requests.length += 1;
+    const ref = `${requests.itr}`
+    requests[ref] = Number(req);
+    if(requests.head === 0) requests.head = requests.itr  
+  }
 
 
 }
@@ -181,9 +197,7 @@ const findNearestIdleLift = async(requestedFloor) => {
       idleLifts = idleLifts.filter(e => e !== resLift)
   
       if(liftPos[resLift] === requestedFloor) {
-        await doorAnimationFunction(resLift).then(()=> 
-        idleLifts.push(resLift)
-        )
+        await doorAnimationFunction(resLift)
         resolve()
       }
     
@@ -199,8 +213,8 @@ const findNearestIdleLift = async(requestedFloor) => {
 }
 
 const moveAndOpenDoorLift = async(resLift, requestedFloor) => {
-  await  moveLift(resLift, requestedFloor).
-  then(async() => await doorAnimationFunction(resLift))
+  await  moveLift(resLift, requestedFloor)
+  await doorAnimationFunction(resLift)
 }
 
 const moveLift = async (liftNumber, requestedFloor) => {
@@ -208,8 +222,6 @@ const moveLift = async (liftNumber, requestedFloor) => {
   liftPos[liftNumber] = parseInt(requestedFloor);
   // console.log({liftNumber, requestedFloor})
   const el = document.querySelector(`.lift-${liftNumber}`);
-  const el2 = document.getElementById(`lift-${liftNumber}-leftDoor`);
-  const el3 = document.getElementById(`lift-${liftNumber}-rightDoor`);
   const liftSpeedModifier = Math.abs(liftPos[liftNumber] - liftPosInitial) * 2
   // console.log({liftPosInitial, "a": liftPos[liftNumber], requestedFloor}, liftSpeedModifier)
 
